@@ -1,5 +1,5 @@
 import discord
-import yaml
+import json
 from discord.ext import commands
 
 bot = commands.Bot(command_prefix='s-')
@@ -13,15 +13,50 @@ async def channelslist(ctx):
             "text": []
         }
     }
+
+    # adding all channels with categories
     for server in bot.guilds:
         for category in server.categories:
             categories[category.name] = {
                 "vocal": [],
                 "text": []
             }
-            print(category.channels)
-            print("\n\n\n")
+            for channel in category.channels:
+                if str(channel.type) == 'text':
+                    proprieties = {"name": channel.name}
 
+                    try:
+                        nsfw = channel.nsfw
+                        proprieties["nsfw"] = str(nsfw).lower()
+                    except:
+                        proprieties["nsfw"] = 'none' 
+
+                    try:
+                        news = channel.news
+                        proprieties["news"] = str(news).lower()
+                    except:
+                        proprieties["news"] = 'none' 
+
+                    categories[category.name]['text'].append(proprieties)
+
+                if str(channel.type) == 'voice':
+                    proprieties = {"name": channel.name}
+
+                    try:
+                        bitrate = channel.bitrate
+                        proprieties["bitrate"] = str(bitrate).lower()
+                    except:
+                        proprieties["bitrate"] = 'none' 
+
+                    try:
+                        limit = channel.user_limit
+                        proprieties["limit"] = str(limit).lower()
+                    except:
+                        proprieties["limit"] = 'none' 
+
+                    categories[category.name]['vocal'].append(proprieties)
+
+    # adding all channels without categories
     for server in bot.guilds:
         for channel in server.channels:
             try:
@@ -45,13 +80,24 @@ async def channelslist(ctx):
                     categories['none']['text'].append(proprieties)
 
                 if str(channel.type) == 'voice':
-                    categories['none']['voice'].append({
-                        "name": channel.name,
-                        "bitrate": channel.bitrate,
-                        "limit": channel.user_limit
-                    })
+                    proprieties = {"name": channel.name}
 
-    print(categories)
-    print("\n\n\n")
+                    try:
+                        bitrate = channel.bitrate
+                        proprieties["bitrate"] = str(bitrate).lower()
+                    except:
+                        proprieties["bitrate"] = 'none' 
+
+                    try:
+                        limit = channel.user_limit
+                        proprieties["limit"] = str(limit).lower()
+                    except:
+                        proprieties["limit"] = 'none' 
+
+                    categories['none']['vocal'].append(proprieties)
+
+    with open('data.json', 'w', encoding='utf8') as outfile:
+        outdata = json.dumps(categories, ensure_ascii=False)
+        outfile.write(outdata)
 
 bot.run('token')
