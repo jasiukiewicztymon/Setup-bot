@@ -103,4 +103,58 @@ async def channelslist(ctx):
         outfile.write(outdata)
     await ctx.send(file=discord.File(r'./{}.json'.format(ctx.message.guild.name)))
 
+@bot.command()
+async def create(ctx, *args):
+    guild = ctx.message.guild
+    arg = []
+    temp = ""
+
+    for arr in args:
+        if arr != '|':
+            temp += arr + " "
+        else:
+            temp = temp[0:len(temp) - 1]
+            arg.append(temp)
+            temp = ""
+    
+    temp = temp[0:len(temp) - 1]
+    arg.append(temp)
+
+    if len(arg) == 2:
+        # creation of channel without category
+        if arg[0] == 'text':
+            await guild.create_text_channel(arg[1])
+        elif arg[0] == 'vocal':
+            await guild.create_voice_channel(arg[1])
+        else:
+            await ctx.reply('Invalid channel type')
+
+    if len(arg) == 3:
+        # creation of channel with category
+
+        # getting category
+        id = 0
+        for server in bot.guilds:
+            for category in server.categories:
+                if category.name == arg[2]:
+                    if arg[0] == 'text':
+                        await guild.create_text_channel(arg[1], category=category)
+                    elif arg[0] == 'vocal':
+                        await guild.create_voice_channel(arg[1], category=category)
+                    else:
+                        await ctx.reply('Invalid channel type')
+
+                try:
+                    id = int(arg[2])
+                except:
+                    continue
+
+                if category.id == id:
+                    if arg[0] == 'text':
+                        await guild.create_text_channel(arg[1], category=category)
+                    elif arg[0] == 'vocal':
+                        await guild.create_voice_channel(arg[1], category=category)
+                    else:
+                        await ctx.reply('Invalid channel type')
+
 bot.run('token')
