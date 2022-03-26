@@ -1,6 +1,8 @@
 import discord
 import json
 from discord.ext import commands
+from discord.ext.commands import Bot
+import asyncio
 
 bot = commands.Bot(command_prefix='s-')
 
@@ -96,8 +98,9 @@ async def channelslist(ctx):
 
                     categories['none']['vocal'].append(proprieties)
 
-    with open('data.json', 'w', encoding='utf8') as outfile:
+    with open('{}.json'.format(ctx.message.guild.name), 'w', encoding='utf8') as outfile:
         outdata = json.dumps(categories, ensure_ascii=False)
         outfile.write(outdata)
+    await ctx.send(file=discord.File(r'./{}.json'.format(ctx.message.guild.name)))
 
 bot.run('token')
