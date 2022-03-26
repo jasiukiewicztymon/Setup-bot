@@ -9,7 +9,7 @@ The setup bot is a discord bot which will made the server creation and server ma
 - [ ] Channels managing
 - [ ] Moderation
 - [ ] Verification
-- [ ] Server channels info exporting
+- [x] Server channels info exporting
 
 #### Website
 
